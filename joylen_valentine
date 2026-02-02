@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Joylen, Will you be my Valentine?</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto;}
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  color:white;
+}
+
+/* Background Image */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:url("photo.jpg") center/cover no-repeat;
+  filter: brightness(0.45) blur(2px);
+  z-index:-1;
+}
+
+.card{
+  background:rgba(0,0,0,0.55);
+  backdrop-filter: blur(8px);
+  padding:40px 30px;
+  border-radius:24px;
+  text-align:center;
+  width:min(560px,92vw);
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+}
+
+h1{
+  font-size:34px;
+  margin-bottom:12px;
+}
+
+p{
+  font-size:17px;
+  line-height:1.6;
+  opacity:.95;
+}
+
+.btns{
+  margin-top:25px;
+  display:flex;
+  justify-content:center;
+  gap:16px;
+}
+
+button{
+  border:0;
+  padding:14px 24px;
+  font-size:16px;
+  border-radius:50px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+
+#yesBtn{ background:#22c55e;color:white; }
+#noBtn{ background:#ef4444;color:white; position:relative; }
+
+.result{
+  display:none;
+  margin-top:22px;
+  font-size:18px;
+  font-weight:700;
+}
+
+.footer{
+  margin-top:20px;
+  font-size:14px;
+  opacity:.8;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Background Music -->
+<iframe width="0" height="0"
+src="https://www.youtube.com/embed/5Eqb_-j3FDA?autoplay=1&loop=1&playlist=5Eqb_-j3FDA"
+frameborder="0" allow="autoplay">
+</iframe>
+
+<div class="card">
+  <h1>Joylen, will you be my Valentine? 💘</h1>
+
+  <p>
+    Even though miles separate us,<br>
+    nothing can separate you from my heart.
+  </p>
+
+  <p>
+    Until I can hold you again,<br>
+    let this page ask what my heart wants to ask you…
+  </p>
+
+  <div class="btns">
+    <button id="yesBtn">Yes 💚</button>
+    <button id="noBtn">No ❤️</button>
+  </div>
+
+  <div class="result" id="result">
+    You just made me the happiest person alive 🥹💖<br><br>
+    Valentine’s Date Plan:<br>
+    Video call, same time, same smile, same love 💕<br>
+    And soon… a real dinner together ❤️
+  </div>
+
+  <div class="footer">
+    Made with ❤️ by Lashon
+  </div>
+</div>
+
+<script>
+const yesBtn = document.getElementById("yesBtn");
+const noBtn  = document.getElementById("noBtn");
+const result = document.getElementById("result");
+
+yesBtn.addEventListener("click", () => {
+  result.style.display = "block";
+  noBtn.disabled = true;
+  noBtn.style.opacity = "0.4";
+});
+
+// No button runs away
+function moveNo(){
+  const x = Math.random() * (window.innerWidth - 120);
+  const y = Math.random() * (window.innerHeight - 60);
+  noBtn.style.position = "fixed";
+  noBtn.style.left = x + "px";
+  noBtn.style.top  = y + "px";
+}
+noBtn.addEventListener("mouseenter", moveNo);
+noBtn.addEventListener("click", moveNo);
+</script>
+
+</body>
+</html>
