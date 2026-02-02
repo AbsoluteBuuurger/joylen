@@ -9,7 +9,6 @@
     :root{
       --bg1:#0b0b12;
       --bg2:#151527;
-      --glass: rgba(255,255,255,.08);
       --stroke: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.95);
       --muted: rgba(255,255,255,.75);
@@ -34,26 +33,25 @@
         linear-gradient(135deg, var(--bg1), var(--bg2));
     }
 
-    .wrap{
-      width: min(980px, 94vw);
-      padding: 18px;
-    }
+    .wrap{ width: min(1040px, 94vw); padding: 18px; }
 
     .card{
-      background: rgba(0,0,0,.40);
+      background: rgba(0,0,0,.42);
       border: 1px solid var(--stroke);
-      border-radius: 26px;
+      border-radius: 28px;
       overflow:hidden;
       backdrop-filter: blur(12px);
       box-shadow: 0 22px 70px rgba(0,0,0,.45);
+      position:relative;
     }
 
     .grid{
       display:grid;
-      grid-template-columns: 1fr 1.25fr;
+      grid-template-columns: 1fr 1.35fr;
       align-items: stretch;
     }
 
+    /* LEFT */
     .left{
       padding: 26px;
       border-right: 1px solid rgba(255,255,255,.10);
@@ -64,8 +62,8 @@
     }
 
     .frame{
-      width: min(360px, 100%);
-      border-radius: 22px;
+      width: min(380px, 100%);
+      border-radius: 24px;
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
       padding: 14px;
@@ -75,7 +73,7 @@
     .photo{
       width:100%;
       aspect-ratio: 3 / 4;
-      border-radius: 18px;
+      border-radius: 20px;
       overflow:hidden;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.25);
@@ -90,7 +88,7 @@
       display:block;
     }
 
-    /* Fallback message if image fails */
+    /* Fallback if image fails */
     .img-fallback{
       position:absolute;
       inset:0;
@@ -98,23 +96,22 @@
       place-items:center;
       padding: 18px;
       text-align:center;
-      color: rgba(255,255,255,.85);
-      font-weight: 800;
+      color: rgba(255,255,255,.88);
+      font-weight: 900;
       line-height: 1.45;
-      background: rgba(0,0,0,.55);
+      background: rgba(0,0,0,.60);
     }
     .img-fallback.show{ display:grid; }
     .img-fallback small{
       display:block;
-      margin-top:8px;
-      color: rgba(255,255,255,.70);
-      font-weight: 700;
+      margin-top:10px;
+      color: rgba(255,255,255,.72);
+      font-weight: 800;
       font-size: 12px;
     }
 
-    .right{
-      padding: 34px 30px 26px;
-    }
+    /* RIGHT */
+    .right{ padding: 34px 30px 26px; }
 
     .tag{
       display:inline-flex;
@@ -130,23 +127,22 @@
     }
 
     h1{
-      margin: 14px 0 12px;
-      font-size: clamp(28px, 3.8vw, 44px);
-      line-height: 1.12;
+      margin: 14px 0 10px;
+      font-size: clamp(28px, 3.8vw, 46px);
+      line-height: 1.10;
       letter-spacing: .2px;
     }
 
     .message{
-      margin-top: 10px;
+      margin-top: 12px;
       color: var(--muted);
       font-size: 17px;
-      line-height: 1.75;
-      max-width: 44ch;
+      line-height: 1.85;
+      max-width: 52ch;
     }
-
     .message strong{
-      color: rgba(255,255,255,.92);
-      font-weight: 900;
+      color: rgba(255,255,255,.94);
+      font-weight: 950;
     }
 
     .btns{
@@ -172,14 +168,16 @@
     button:active{ transform: translateY(1px) scale(.99); }
 
     #yesBtn{ background: var(--yes); color: white; }
+
+    /* NO button moves smoothly ONLY when hovered */
     #noBtn{
       background: var(--no);
       color:white;
-      position: fixed; /* we’ll place it precisely via JS */
+      position: fixed;
       left: 0;
       top: 0;
       transform: translate(-9999px, -9999px); /* hidden until placed */
-      transition: left .28s ease, top .28s ease, transform .28s ease;
+      transition: left .30s ease, top .30s ease, transform .30s ease;
       will-change: left, top, transform;
     }
 
@@ -191,17 +189,33 @@
       border: 1px dashed rgba(255,255,255,.22);
       background: rgba(255,255,255,.07);
       color: rgba(255,255,255,.92);
-      font-weight: 900;
+      font-weight: 950;
       font-size: 18px;
       line-height: 1.6;
     }
     .afterYes.show{ display:block; }
 
+    /* Spotify embed (no extra text) */
+    .spotify{
+      margin-top: 16px;
+      width: min(560px, 100%);
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .spotify iframe{
+      width:100%;
+      height: 152px;
+      border:0;
+      display:block;
+    }
+
     .footer{
       margin-top: 14px;
       color: rgba(255,255,255,.70);
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 850;
     }
 
     /* Start overlay */
@@ -268,7 +282,6 @@
     }
     .effectsOn #fx,
     .effectsOn .heartsLayer{ opacity: 1; }
-
     .fadeOut #fx,
     .fadeOut .heartsLayer{ opacity: 0; }
 
@@ -291,6 +304,7 @@
       .right{ text-align:center; }
       .message{ margin-left:auto; margin-right:auto; }
       .btns{ justify-content:center; }
+      .spotify{ margin-left:auto; margin-right:auto; }
     }
   </style>
 </head>
@@ -305,17 +319,6 @@
     </div>
   </div>
 
-  <!-- Hidden YouTube audio for ILY -->
-  <iframe
-    id="yt"
-    width="0"
-    height="0"
-    src="https://www.youtube.com/embed/5Eqb_-j3FDA?enablejsapi=1&autoplay=0&loop=1&playlist=5Eqb_-j3FDA"
-    frameborder="0"
-    allow="autoplay"
-    aria-hidden="true">
-  </iframe>
-
   <!-- Effects -->
   <canvas id="fx"></canvas>
   <div class="heartsLayer" id="heartsLayer"></div>
@@ -327,13 +330,10 @@
         <div class="left">
           <div class="frame">
             <div class="photo">
-              <img id="photoImg" src="photo.jpg" alt="photo" />
+              <img id="photoImg" alt="photo" />
               <div class="img-fallback" id="imgFallback">
                 I can’t load the photo 😭
-                <small>
-                  Make sure the image is in the repo root and named exactly:
-                  <br><strong>photo.jpg</strong> (lowercase)
-                </small>
+                <small id="imgHint"></small>
               </div>
             </div>
           </div>
@@ -346,8 +346,11 @@
           <h1>Bunu, will you be my Valentine? 💘</h1>
 
           <div class="message">
-            Even if we’re far apart, you’re still the first person I want to tell
-            everything to — every day.
+            Even if we’re far apart, you’re still the person I want to tell
+            everything to — every single day.
+            <br><br>
+            I don’t need a perfect moment to say it.
+            I just need <strong>you</strong>.
             <br><br>
             So I’m asking you properly, from my heart:
             <br>
@@ -356,7 +359,6 @@
 
           <div class="btns">
             <button id="yesBtn">Yes 💚</button>
-            <!-- No button is placed by JS and only moves on hover -->
           </div>
 
           <div class="afterYes" id="afterYes">
@@ -365,47 +367,79 @@
             because it’s you.
           </div>
 
+          <!-- Spotify embed for your provided track -->
+          <div class="spotify">
+            <iframe
+              src="https://open.spotify.com/embed/track/62aP9fBQKYKxi7PDXwcUAS?utm_source=generator"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy">
+            </iframe>
+          </div>
+
           <div class="footer">Made with ❤️ by Lashon</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- NO button lives at body level so it can move freely -->
+  <!-- NO button -->
   <button id="noBtn">No ❤️</button>
 
   <script>
-    // ---------- Image fallback if file name/path is wrong ----------
+    // ---------- Photo auto-fix: tries common filenames (case matters on GitHub Pages) ----------
     const photoImg = document.getElementById("photoImg");
     const imgFallback = document.getElementById("imgFallback");
-    photoImg.addEventListener("error", () => imgFallback.classList.add("show"));
+    const imgHint = document.getElementById("imgHint");
 
-    // ---------- Start overlay + start music ----------
+    const candidates = [
+      "photo.jpg","Photo.jpg","PHOTO.jpg",
+      "photo.jpeg","Photo.jpeg","PHOTO.jpeg",
+      "photo.png","Photo.png","PHOTO.png",
+      "image.jpg","Image.jpg","image.png","Image.png"
+    ];
+
+    (async function loadPhoto() {
+      for (const name of candidates) {
+        const ok = await testImage(name);
+        if (ok) {
+          photoImg.src = `${name}?v=${Date.now()}`; // cache-bust
+          imgFallback.classList.remove("show");
+          return;
+        }
+      }
+      imgFallback.classList.add("show");
+      imgHint.innerHTML =
+        `I searched for these files in the repo root:<br><strong>${candidates.join("</strong>, <strong>")}</strong><br><br>
+         Fix: rename your image to <strong>photo.jpg</strong> and keep it in the repo root.`;
+    })();
+
+    function testImage(src) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = `${src}?t=${Date.now()}`;
+      });
+    }
+
+    // ---------- Start overlay ----------
     const overlay = document.getElementById("overlay");
     const startBtn = document.getElementById("startBtn");
-    const yt = document.getElementById("yt");
-    function ytCmd(func, args=[]){
-      yt.contentWindow.postMessage(JSON.stringify({ event:"command", func, args }), "*");
-    }
 
     startBtn.addEventListener("click", () => {
       overlay.style.display = "none";
-      // Start music (no visible text)
-      ytCmd("setVolume", [65]);
-      ytCmd("playVideo");
-      placeNoButtonNearButtons();
+      placeNoButtonNearYes();
     });
 
-    // ---------- Place "No" near the buttons initially ----------
-    const card = document.getElementById("card");
+    // ---------- Place NO button near YES button ----------
     const yesBtn = document.getElementById("yesBtn");
     const noBtn  = document.getElementById("noBtn");
 
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-    function placeNoButtonNearButtons(){
+    function placeNoButtonNearYes(){
       const yesRect = yesBtn.getBoundingClientRect();
-      const pad = 10;
+      const pad = 12;
       const x = clamp(yesRect.left + yesRect.width + 14, pad, window.innerWidth - noBtn.offsetWidth - pad);
       const y = clamp(yesRect.top, pad, window.innerHeight - noBtn.offsetHeight - pad);
       noBtn.style.left = x + "px";
@@ -414,7 +448,7 @@
     }
 
     window.addEventListener("resize", () => {
-      if(!noBtn.disabled) placeNoButtonNearButtons();
+      if(!noBtn.disabled) placeNoButtonNearYes();
       resizeCanvas();
     });
 
@@ -515,24 +549,20 @@
       document.body.classList.add("effectsOn");
       if(!animId) animateFx();
 
-      // Fill screen quickly
       const heartsTimer = setInterval(() => {
-        for(let i=0;i<16;i++) dropHeart();
-      }, 110);
+        for(let i=0;i<14;i++) dropHeart();
+      }, 115);
 
       const fireworksTimer = setInterval(() => {
         for(let i=0;i<4;i++) launchFirework();
       }, 380);
 
-      // Stop after 4s, then fade away
       setTimeout(() => {
         clearInterval(heartsTimer);
         clearInterval(fireworksTimer);
 
-        // fade out
         document.body.classList.add("fadeOut");
 
-        // cleanup after fade
         setTimeout(() => {
           document.body.classList.remove("effectsOn");
           document.body.classList.remove("fadeOut");
@@ -549,7 +579,7 @@
       // remove YES button
       yesBtn.remove();
 
-      // disable NO button (no more movement)
+      // disable + hide NO button
       noBtn.disabled = true;
       noBtn.style.opacity = "0";
       noBtn.style.pointerEvents = "none";
@@ -557,7 +587,7 @@
       // show message
       afterYes.classList.add("show");
 
-      // celebrate 4 seconds then fade out
+      // celebration
       startCelebration4s();
     });
   </script>
