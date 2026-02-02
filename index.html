@@ -1,199 +1,787 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Bunu, Will you be my Valentine?</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bunu, Will you be my Valentine?</title>
 
-<style>
-*{box-sizing:border-box;font-family:system-ui;margin:0}
-body{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,#0b0b12,#151527);
-  color:white;
-  overflow:hidden;
-}
-.card{
-  width:min(950px,94vw);
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:28px;
-  backdrop-filter:blur(14px);
-  overflow:hidden;
-}
-.grid{display:grid;grid-template-columns:1fr 1.3fr}
-.left{
-  padding:26px;
-  border-right:1px solid rgba(255,255,255,.12);
-  display:flex;align-items:center;justify-content:center;
-}
-.photo{
-  width:100%;max-width:360px;
-  aspect-ratio:3/4;
-  border-radius:20px;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,.2);
-}
-.photo img{width:100%;height:100%;object-fit:cover}
+  <style>
+    :root{
+      --bg1:#0b0b12;
+      --bg2:#151527;
+      --stroke: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.95);
+      --muted: rgba(255,255,255,.75);
+      --accent: #ff4fa3;
+      --yes: #22c55e;
+      --no:  #ef4444;
+    }
 
-.right{padding:34px}
-h1{font-size:40px;margin-bottom:12px}
-.message{line-height:1.8;color:#ddd;font-size:17px}
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,79,163,.22), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(34,197,94,.15), transparent 48%),
+        radial-gradient(circle at 60% 80%, rgba(255,255,255,.10), transparent 40%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+    }
 
-.btns{margin-top:18px}
-button{
-  padding:14px 22px;border:0;border-radius:999px;
-  font-weight:800;font-size:16px;cursor:pointer;
-}
-#yesBtn{background:#22c55e;color:white}
+    .wrap{ width: min(1040px, 94vw); padding: 18px; }
 
-#noBtn{
-  position:fixed;
-  background:#ef4444;color:white;
-  left:0;top:0;
-  transform:translate(-9999px,-9999px);
-  transition:left .35s ease, top .35s ease, transform .35s ease;
-}
+    .card{
+      background: rgba(0,0,0,.42);
+      border: 1px solid var(--stroke);
+      border-radius: 28px;
+      overflow:hidden;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 22px 70px rgba(0,0,0,.45);
+      position:relative;
+      z-index: 2;
+    }
 
-.yesCard{
-  display:none;
-  margin-top:18px;
-  padding:18px;
-  border-radius:18px;
-  background:rgba(255,255,255,.08);
-  border:1px dashed rgba(255,255,255,.3);
-}
-.yesCard.show{display:block}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1.35fr;
+      align-items: stretch;
+    }
 
-.overlay{
-  position:fixed;inset:0;
-  display:grid;place-items:center;
-  background:rgba(0,0,0,.6);
-  backdrop-filter:blur(10px);
-  z-index:99;
-}
-.overlay button{
-  background:#ff4fa3;color:white;
-}
+    /* LEFT */
+    .left{
+      padding: 26px;
+      border-right: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(255,255,255,.03);
+    }
 
-canvas{position:fixed;inset:0;pointer-events:none;opacity:0;transition:.6s}
-.effectsOn canvas{opacity:1}
+    .frame{
+      width: min(380px, 100%);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding: 14px;
+      box-shadow: 0 18px 55px rgba(0,0,0,.35);
+    }
 
-</style>
+    .photo{
+      width:100%;
+      aspect-ratio: 3 / 4;
+      border-radius: 20px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      display:grid;
+      place-items:center;
+      position: relative;
+    }
+    .photo img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+
+    /* Fallback if image fails */
+    .img-fallback{
+      position:absolute;
+      inset:0;
+      display:none;
+      place-items:center;
+      padding: 18px;
+      text-align:center;
+      color: rgba(255,255,255,.88);
+      font-weight: 900;
+      line-height: 1.45;
+      background: rgba(0,0,0,.60);
+    }
+    .img-fallback.show{ display:grid; }
+    .img-fallback small{
+      display:block;
+      margin-top:10px;
+      color: rgba(255,255,255,.72);
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    /* RIGHT */
+    .right{ padding: 34px 30px 26px; }
+
+    .tag{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    h1{
+      margin: 14px 0 10px;
+      font-size: clamp(28px, 3.8vw, 46px);
+      line-height: 1.10;
+      letter-spacing: .2px;
+    }
+
+    .message{
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.85;
+      max-width: 52ch;
+    }
+    .message strong{
+      color: rgba(255,255,255,.94);
+      font-weight: 950;
+    }
+
+    .btns{
+      margin-top: 18px;
+      display:flex;
+      gap: 12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    button{
+      border:0;
+      cursor:pointer;
+      padding: 14px 22px;
+      border-radius: 999px;
+      font-weight: 950;
+      font-size: 16px;
+      min-width: 150px;
+      box-shadow: 0 12px 24px rgba(0,0,0,.25);
+      user-select:none;
+      transition: transform .18s ease, opacity .18s ease, filter .18s ease;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    #yesBtn{ background: var(--yes); color: white; }
+
+    /* NO button: smooth move ONLY on hover */
+    #noBtn{
+      background: var(--no);
+      color:white;
+      position: fixed;
+      left: 0;
+      top: 0;
+      transform: translate(-9999px, -9999px);
+      transition: left .32s ease, top .32s ease, transform .32s ease;
+      will-change: left, top, transform;
+      z-index: 20;
+    }
+
+    /* Romantic Yes card */
+    .yesCard{
+      display:none;
+      margin-top: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.07);
+      overflow:hidden;
+    }
+    .yesCard.show{ display:block; }
+
+    .yesHeader{
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      font-weight: 950;
+      font-size: 18px;
+      color: rgba(255,255,255,.94);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .pill{
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,79,163,.16);
+      border: 1px solid rgba(255,79,163,.22);
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(255,255,255,.88);
+    }
+
+    .yesBody{
+      padding: 14px;
+      display:grid;
+      gap: 10px;
+    }
+
+    .note{
+      padding: 12px 12px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.20);
+      border: 1px dashed rgba(255,255,255,.22);
+      color: rgba(255,255,255,.92);
+      font-weight: 900;
+      line-height: 1.7;
+      font-size: 16.5px;
+    }
+
+    .small{
+      color: rgba(255,255,255,.78);
+      font-weight: 800;
+      font-size: 14.5px;
+      line-height: 1.65;
+    }
+
+    .footer{
+      margin-top: 14px;
+      color: rgba(255,255,255,.70);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    /* Start overlay */
+    .overlay{
+      position: fixed;
+      inset:0;
+      display:grid;
+      place-items:center;
+      z-index: 99;
+      background: rgba(0,0,0,.60);
+      backdrop-filter: blur(10px);
+      padding: 18px;
+    }
+    .overlayCard{
+      width:min(520px, 92vw);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 22px;
+      padding: 22px 18px;
+      text-align:center;
+      color: var(--text);
+      box-shadow: 0 20px 60px rgba(0,0,0,.55);
+    }
+    .overlayCard h2{
+      margin:0 0 8px;
+      font-size: 22px;
+      font-weight: 950;
+    }
+    .overlayCard p{
+      margin:0 0 14px;
+      color: rgba(255,255,255,.78);
+      line-height: 1.5;
+      font-size: 14.5px;
+    }
+    .startBtn{
+      background: var(--accent);
+      color: white;
+      border:0;
+      padding: 14px 18px;
+      border-radius: 999px;
+      font-weight: 950;
+      font-size: 16px;
+      cursor:pointer;
+      box-shadow: 0 12px 26px rgba(0,0,0,.3);
+    }
+
+    /* Effects layers */
+    canvas#fx{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      transition: opacity .6s ease;
+    }
+    .heartsLayer{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      z-index: 9;
+      opacity: 0;
+      transition: opacity .6s ease;
+      overflow:hidden;
+    }
+    .effectsOn #fx,
+    .effectsOn .heartsLayer{ opacity: 1; }
+    .fadeOut #fx,
+    .fadeOut .heartsLayer{ opacity: 0; }
+
+    .heart{
+      position:absolute;
+      top:-10vh;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.28));
+    }
+    @keyframes fall{
+      to{
+        transform: translate3d(var(--dx), 120vh, 0) rotate(var(--rot));
+        opacity: 0;
+      }
+    }
+
+    /* Tiny heart reveal button */
+    .secretBtn{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 30;
+      display:none;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.40);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 30px rgba(0,0,0,.35);
+      cursor:pointer;
+      user-select:none;
+    }
+    .secretBtn.show{ display:flex; }
+    .secretHeart{
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      background: rgba(255,79,163,.20);
+      border: 1px solid rgba(255,79,163,.30);
+      font-size: 18px;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.08); }
+    }
+    .secretText{
+      font-weight: 900;
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
+      opacity: .9;
+    }
+
+    /* Popup modal */
+    .modal{
+      position: fixed;
+      inset: 0;
+      display:none;
+      place-items:center;
+      z-index: 80;
+      background: rgba(0,0,0,.62);
+      backdrop-filter: blur(10px);
+      padding: 18px;
+    }
+    .modal.show{ display:grid; }
+    .modalCard{
+      width: min(640px, 94vw);
+      border-radius: 24px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 24px 70px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .modalTop{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      font-weight: 950;
+    }
+    .closeBtn{
+      border: 0;
+      background: rgba(255,255,255,.10);
+      color: rgba(255,255,255,.92);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+      cursor:pointer;
+      min-width: auto;
+      box-shadow: none;
+    }
+    .modalBody{
+      padding: 16px;
+      color: rgba(255,255,255,.90);
+      line-height: 1.8;
+      font-weight: 900;
+      font-size: 16.5px;
+    }
+    .modalBody .soft{
+      display:block;
+      margin-top: 12px;
+      color: rgba(255,255,255,.75);
+      font-weight: 800;
+      font-size: 14.5px;
+    }
+
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+      .left{ border-right:none; border-bottom: 1px solid rgba(255,255,255,.10); }
+      .right{ text-align:center; }
+      .message{ margin-left:auto; margin-right:auto; }
+      .btns{ justify-content:center; }
+    }
+  </style>
 </head>
 
 <body>
-
-<div class="overlay" id="overlay">
-  <button id="startBtn">Start 💘</button>
-</div>
-
-<!-- YouTube Song -->
-<iframe id="yt" width="0" height="0"
-src="https://www.youtube.com/embed/piOIvNO2M8Q?enablejsapi=1&loop=1&playlist=piOIvNO2M8Q"
-allow="autoplay"></iframe>
-
-<canvas id="fx"></canvas>
-
-<div class="card">
-  <div class="grid">
-    <div class="left">
-      <div class="photo">
-        <img id="photoImg"/>
-      </div>
+  <!-- Start overlay -->
+  <div class="overlay" id="overlay">
+    <div class="overlayCard">
+      <h2>One small surprise for Bunu 💖</h2>
+      <p>Tap Start</p>
+      <button class="startBtn" id="startBtn">Start 💘</button>
     </div>
+  </div>
 
-    <div class="right">
-      <h1>Bunu, will you be my Valentine? 💘</h1>
-      <div class="message">
-        Even from far away, you’re the person I feel closest to.<br><br>
-        So I’m asking you properly, from my heart:<br>
-        <strong>Will you be my Valentine?</strong>
-      </div>
+  <!-- Your YouTube song -->
+  <iframe
+    id="yt"
+    width="0"
+    height="0"
+    src="https://www.youtube.com/embed/piOIvNO2M8Q?enablejsapi=1&autoplay=0&loop=1&playlist=piOIvNO2M8Q"
+    frameborder="0"
+    allow="autoplay"
+    aria-hidden="true">
+  </iframe>
 
-      <div class="btns">
-        <button id="yesBtn">Yes 💚</button>
-      </div>
+  <!-- Effects -->
+  <canvas id="fx"></canvas>
+  <div class="heartsLayer" id="heartsLayer"></div>
 
-      <div class="yesCard" id="yesCard">
-        <strong>
-        “I hate that distance keeps us apart. All I want is to wake up to your smile, hear your voice without missing it the moment it ends, and hold your hand like it’s the most normal thing in the world.”
-        </strong>
-        <br><br>
-        You’re my favorite notification, my safest place, and my best future plan.
+  <div class="wrap">
+    <div class="card" id="card">
+      <div class="grid">
+        <!-- Photo side -->
+        <div class="left">
+          <div class="frame">
+            <div class="photo">
+              <img id="photoImg" alt="photo" />
+              <div class="img-fallback" id="imgFallback">
+                I can’t load the photo 😭
+                <small id="imgHint"></small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message side -->
+        <div class="right">
+          <div class="tag">💌 Long distance, same heart</div>
+
+          <h1>Bunu, will you be my Valentine? 💘</h1>
+
+          <div class="message">
+            Even from far away, you’re the person I feel closest to.
+            <br><br>
+            When I miss you, I don’t just miss your presence —
+            I miss your smile, your voice, and the simple feeling of being near you.
+            <br><br>
+            So I’m asking you properly, from my heart:
+            <br><strong>Will you be my Valentine?</strong>
+          </div>
+
+          <div class="btns" id="btns">
+            <button id="yesBtn">Yes 💚</button>
+          </div>
+
+          <div class="yesCard" id="yesCard">
+            <div class="yesHeader">
+              <span>She said yes… and my heart just smiled 🥹💖</span>
+              <span class="pill">For Bunu • From Lashon</span>
+            </div>
+            <div class="yesBody">
+              <div class="note">
+                “I hate that distance keeps us apart. All I want is to wake up to your smile,
+                hear your voice without missing it the moment it ends, and hold your hand like
+                it’s the most normal thing in the world.”
+              </div>
+              <div class="small">
+                Valentine plan: we call, we talk, we laugh, we stay on the line a little longer…
+                and I remind you (again) that I’m yours — even across distance.
+              </div>
+              <div class="small">
+                And when we finally meet, I’ll redo this moment in person.
+              </div>
+            </div>
+          </div>
+
+          <div class="footer">Made with ❤️ by Lashon</div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<button id="noBtn">No ❤️</button>
+  <!-- NO button -->
+  <button id="noBtn">No ❤️</button>
 
-<script>
-// ---------- load image auto ----------
-const img=document.getElementById("photoImg");
-const names=["photo.jpg","Photo.jpg","photo.png","image.jpg","Image.png"];
-for(let n of names){
-  const t=new Image();
-  t.onload=()=>{img.src=n};
-  t.src=n;
-}
+  <!-- Tiny heart secret reveal -->
+  <div class="secretBtn" id="secretBtn" role="button" aria-label="Click me">
+    <div class="secretHeart">💗</div>
+    <div class="secretText">click me</div>
+  </div>
 
-// ---------- start ----------
-const overlay=document.getElementById("overlay");
-const yt=document.getElementById("yt");
-function ytCmd(f){yt.contentWindow.postMessage(JSON.stringify({event:"command",func:f}),"*")}
-document.getElementById("startBtn").onclick=()=>{
-  overlay.style.display="none";
-  ytCmd("playVideo");
-  placeNo();
-};
+  <!-- Popup modal for your extra message -->
+  <div class="modal" id="modal">
+    <div class="modalCard">
+      <div class="modalTop">
+        <span>For you, Bunu 💖</span>
+        <button class="closeBtn" id="closeModal">Close</button>
+      </div>
+      <div class="modalBody" id="modalBody">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
 
-// ---------- no button ----------
-const yesBtn=document.getElementById("yesBtn");
-const noBtn=document.getElementById("noBtn");
+  <script>
+    // ---------- YouTube control ----------
+    const yt = document.getElementById("yt");
+    function ytCmd(func, args=[]){
+      yt.contentWindow.postMessage(JSON.stringify({ event:"command", func, args }), "*");
+    }
 
-function placeNo(){
-  const r=yesBtn.getBoundingClientRect();
-  noBtn.style.left=(r.right+10)+"px";
-  noBtn.style.top=r.top+"px";
-  noBtn.style.transform="translate(0,0)";
-}
-noBtn.onmouseenter=()=>{
-  const x=Math.random()*(window.innerWidth-120);
-  const y=Math.random()*(window.innerHeight-60);
-  noBtn.style.left=x+"px";
-  noBtn.style.top=y+"px";
-};
+    // ---------- Photo auto-fix: tries common filenames and STOPS after first success ----------
+    const photoImg = document.getElementById("photoImg");
+    const imgFallback = document.getElementById("imgFallback");
+    const imgHint = document.getElementById("imgHint");
 
-// ---------- effects ----------
-const canvas=document.getElementById("fx");
-const ctx=canvas.getContext("2d");
-canvas.width=innerWidth;canvas.height=innerHeight;
+    const candidates = [
+      "photo.jpg","Photo.jpg","PHOTO.jpg",
+      "photo.jpeg","Photo.jpeg","PHOTO.jpeg",
+      "photo.png","Photo.png","PHOTO.png",
+      "image.jpg","Image.jpg","image.png","Image.png"
+    ];
 
-function fire(){
-  for(let i=0;i<80;i++){
-    ctx.fillStyle=`hsl(${Math.random()*360},90%,60%)`;
-    ctx.beginPath();
-    ctx.arc(Math.random()*innerWidth,Math.random()*innerHeight,3,0,6.28);
-    ctx.fill();
-  }
-}
+    (async function loadPhoto() {
+      for (const name of candidates) {
+        const ok = await testImage(name);
+        if (ok) {
+          photoImg.src = `${name}?v=${Date.now()}`;
+          imgFallback.classList.remove("show");
+          return; // stop after first success (prevents “disappearing”)
+        }
+      }
+      imgFallback.classList.add("show");
+      imgHint.innerHTML =
+        `Rename your image to <strong>photo.jpg</strong> and keep it in the repo root.`;
+    })();
 
-yesBtn.onclick=()=>{
-  yesBtn.remove();
-  noBtn.style.display="none";
-  document.getElementById("yesCard").classList.add("show");
-  document.body.classList.add("effectsOn");
-  let t=setInterval(fire,80);
-  setTimeout(()=>{
-    clearInterval(t);
-    document.body.classList.remove("effectsOn");
-    ctx.clearRect(0,0,innerWidth,innerHeight);
-  },4000);
-};
-</script>
+    function testImage(src) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = `${src}?t=${Date.now()}`;
+      });
+    }
 
+    // ---------- Start overlay ----------
+    const overlay = document.getElementById("overlay");
+    const startBtn = document.getElementById("startBtn");
+
+    startBtn.addEventListener("click", () => {
+      overlay.style.display = "none";
+      // play song after user tap
+      ytCmd("setVolume", [65]);
+      ytCmd("playVideo");
+      placeNoButtonNearYes();
+    });
+
+    // ---------- NO button positioning + hover move only ----------
+    const yesBtn = document.getElementById("yesBtn");
+    const btns = document.getElementById("btns");
+    const noBtn  = document.getElementById("noBtn");
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function placeNoButtonNearYes(){
+      const yesRect = yesBtn.getBoundingClientRect();
+      const pad = 12;
+      const x = clamp(yesRect.left + yesRect.width + 14, pad, window.innerWidth - noBtn.offsetWidth - pad);
+      const y = clamp(yesRect.top, pad, window.innerHeight - noBtn.offsetHeight - pad);
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+      noBtn.style.transform = "translate(0,0)";
+    }
+
+    window.addEventListener("resize", () => {
+      if(!noBtn.disabled) placeNoButtonNearYes();
+      resizeCanvas();
+    });
+
+    function moveNoSmooth(){
+      const rect = noBtn.getBoundingClientRect();
+      const pad = 16;
+      const maxX = window.innerWidth - rect.width - pad;
+      const maxY = window.innerHeight - rect.height - pad;
+
+      const x = pad + Math.random() * (maxX - pad);
+      const y = pad + Math.random() * (maxY - pad);
+      const rot = (Math.random()*10 - 5);
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+      noBtn.style.transform = `rotate(${rot}deg)`;
+    }
+    noBtn.addEventListener("mouseenter", moveNoSmooth);
+
+    // ---------- Effects: hearts + fireworks for 4s then fade out ----------
+    const heartsLayer = document.getElementById("heartsLayer");
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas(){
+      canvas.width  = window.innerWidth * devicePixelRatio;
+      canvas.height = window.innerHeight * devicePixelRatio;
+      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+    resizeCanvas();
+
+    const heartEmojis = ["💖","💘","💗","💞","💓","💕","❤️","🩷"];
+    function dropHeart(){
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+      const left = Math.random() * 100;
+      const size = 14 + Math.random()*34;
+      const dur  = 1.0 + Math.random()*1.7;
+      const dx   = (Math.random()*220 - 110) + "px";
+      const rot  = (Math.random()*260 - 130) + "deg";
+      h.style.left = left + "vw";
+      h.style.fontSize = size + "px";
+      h.style.animationDuration = dur + "s";
+      h.style.setProperty("--dx", dx);
+      h.style.setProperty("--rot", rot);
+      heartsLayer.appendChild(h);
+      setTimeout(()=>h.remove(), dur*1000 + 120);
+    }
+
+    const particles = [];
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    function launchFirework(){
+      const x = rand(60, window.innerWidth-60);
+      const y = rand(90, window.innerHeight*0.55);
+      const count = 140 + Math.floor(Math.random()*120);
+
+      for(let i=0;i<count;i++){
+        const a = (Math.PI*2) * (i/count);
+        const sp = rand(2.4, 7.2);
+        particles.push({
+          x, y,
+          vx: Math.cos(a)*sp,
+          vy: Math.sin(a)*sp,
+          life: rand(35, 70),
+          size: rand(1.6, 3.4),
+          hue: rand(0, 360)
+        });
+      }
+    }
+
+    let animId = null;
+    function animateFx(){
+      ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        p.vy += 0.06;
+        p.vx *= 0.985; p.vy *= 0.985;
+        p.life -= 1;
+
+        const a = Math.max(0, p.life/70);
+        ctx.globalAlpha = a;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fillStyle = `hsl(${p.hue}, 92%, 66%)`;
+        ctx.fill();
+
+        if(p.life <= 0) particles.splice(i,1);
+      }
+      ctx.globalAlpha = 1;
+      animId = requestAnimationFrame(animateFx);
+    }
+
+    function startCelebration4s(){
+      document.body.classList.add("effectsOn");
+      if(!animId) animateFx();
+
+      const heartsTimer = setInterval(() => {
+        for(let i=0;i<14;i++) dropHeart();
+      }, 115);
+
+      const fireworksTimer = setInterval(() => {
+        for(let i=0;i<4;i++) launchFirework();
+      }, 380);
+
+      setTimeout(() => {
+        clearInterval(heartsTimer);
+        clearInterval(fireworksTimer);
+
+        document.body.classList.add("fadeOut");
+
+        setTimeout(() => {
+          document.body.classList.remove("effectsOn");
+          document.body.classList.remove("fadeOut");
+          particles.length = 0;
+          if(animId){ cancelAnimationFrame(animId); animId = null; }
+        }, 650);
+      }, 4000);
+    }
+
+    // ---------- Secret message popup ----------
+    const secretBtn = document.getElementById("secretBtn");
+    const modal = document.getElementById("modal");
+    const closeModal = document.getElementById("closeModal");
+    const modalBody = document.getElementById("modalBody");
+
+    // Your “separate message” you asked to pop up
+    const separateMessage =
+      "I hate that distance keeps us apart. I just wish this distance never existed — " +
+      "because all I want is to see your smile, hear your voice, and hold your hands every day.";
+
+    secretBtn.addEventListener("click", () => {
+      modalBody.innerHTML = `
+        ${separateMessage}
+        <span class="soft">— Lashon</span>
+      `;
+      modal.classList.add("show");
+    });
+
+    closeModal.addEventListener("click", () => modal.classList.remove("show"));
+    modal.addEventListener("click", (e) => {
+      if(e.target === modal) modal.classList.remove("show");
+    });
+
+    // ---------- YES click behavior ----------
+    const yesCard = document.getElementById("yesCard");
+
+    yesBtn.addEventListener("click", () => {
+      // remove YES button area
+      btns.style.display = "none";
+
+      // disable + hide NO
+      noBtn.disabled = true;
+      noBtn.style.opacity = "0";
+      noBtn.style.pointerEvents = "none";
+
+      // show romantic card
+      yesCard.classList.add("show");
+
+      // show tiny heart reveal button
+      secretBtn.classList.add("show");
+
+      // celebration
+      startCelebration4s();
+    });
+  </script>
 </body>
 </html>
